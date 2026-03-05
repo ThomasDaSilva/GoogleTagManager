@@ -81,7 +81,7 @@ class GoogleTagService
         $event = new GoogleTagPageViewEvent($result, $user, $view);
         $event = $this->dispatcher->dispatch($event);
 
-        return json_encode($event->getResult(), JSON_THROW_ON_ERROR);
+        return json_encode($event->getResult(), JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     /**
@@ -92,9 +92,9 @@ class GoogleTagService
         Lang                 $lang,
         Currency             $currency,
         ?ProductSaleElements $pse = null,
-        $quantity = null,
-        $itemList = false,
-        $taxed = false,
+                             $quantity = null,
+                             $itemList = false,
+                             $taxed = false,
         ?Country             $country = null
     ): array {
         $product->setLocale($lang->getLocale());
@@ -273,7 +273,7 @@ class GoogleTagService
             $result['user']['userId'] = $customer->getRef();
         }
 
-        return json_encode($result, JSON_THROW_ON_ERROR);
+        return json_encode($result, JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     /**
@@ -283,7 +283,7 @@ class GoogleTagService
     public function getCartData(?int $cartId, $addressCountry): string
     {
         if (!$cartId || !$cart = CartQuery::create()->findPk($cartId)) {
-            return json_encode([], JSON_THROW_ON_ERROR);
+            return json_encode([], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         }
 
         $items = array_map(function (CartItem $cartItem) use ($addressCountry) {
@@ -297,7 +297,7 @@ class GoogleTagService
                 'value' => $cart->getTaxedAmount($addressCountry),
                 'items' => $items
             ]
-        ], JSON_THROW_ON_ERROR);
+        ], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     /**
@@ -307,7 +307,7 @@ class GoogleTagService
     public function getCheckOutData(?int $cartId, $addressCountry): string
     {
         if (!$cartId || !$cart = CartQuery::create()->findPk($cartId)) {
-            return json_encode([], JSON_THROW_ON_ERROR);
+            return json_encode([], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         }
 
         /** @var Session $session */
@@ -327,7 +327,7 @@ class GoogleTagService
                 'coupon' => $coupons,
                 'items' => $items
             ]
-        ], JSON_THROW_ON_ERROR);
+        ], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     /**
@@ -393,7 +393,7 @@ class GoogleTagService
                 'shipping_tier' => $shippingType,
                 'items' => $this->getOrderProductItems($order, $order->getOrderAddressRelatedByInvoiceOrderAddressId()->getCountry())
             ]
-        ], JSON_THROW_ON_ERROR);
+        ], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     /**
@@ -439,7 +439,7 @@ class GoogleTagService
                     'country' => $invoiceAddress->getCountry()->getIsoalpha2()
                 ]
             ]
-        ], JSON_THROW_ON_ERROR);
+        ], JSON_THROW_ON_ERROR | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
     }
 
     /**
