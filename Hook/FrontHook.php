@@ -23,8 +23,9 @@ use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Core\HttpFoundation\Session\Session;
 use Thelia\Core\Template\Assets\AssetResolverInterface;
+use Thelia\Domain\Taxation\TaxEngine\TaxEngine;
+use Thelia\Model\Lang;
 use Thelia\Model\LangQuery;
-use Thelia\TaxEngine\TaxEngine;
 use TheliaSmarty\Template\SmartyParser;
 
 /**
@@ -148,7 +149,7 @@ class FrontHook extends BaseHook
         $this->requestStack->getCurrentRequest()?->getSession()->set(GoogleTagManager::GOOGLE_TAG_VIEW_ITEM, $productId);
     }
 
-    protected function getLang()
+    protected function getLang(): Lang
     {
         $lang = $this->getRequest()->getSession()?->get("thelia.current.lang");
         if (null === $lang) {

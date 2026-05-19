@@ -15,6 +15,8 @@ namespace GoogleTagManager\Controller;
 use Exception;
 use GoogleTagManager\Form\ConfigurationForm;
 use GoogleTagManager\GoogleTagManager;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
@@ -30,7 +32,7 @@ use Thelia\Core\Translation\Translator;
 class ConfigurationController extends BaseAdminController
 {
     #[Route('/save', name: 'save', methods: ['POST'])]
-    public function saveAction()
+    public function saveAction(): RedirectResponse|Response|null
     {
         if (null !== $response = $this->checkAuth(array(AdminResources::MODULE), array('googletagmanager'), AccessManager::UPDATE)) {
             return $response;
