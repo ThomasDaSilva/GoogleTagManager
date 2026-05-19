@@ -7,6 +7,8 @@ use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\HttpFoundation\Session\Session;
+use Thelia\Domain\Taxation\TaxEngine\Calculator;
+use Thelia\Domain\Taxation\TaxEngine\TaxEngine;
 use Thelia\Model\BrandQuery;
 use Thelia\Model\CartItem;
 use Thelia\Model\CartQuery;
@@ -25,8 +27,6 @@ use Thelia\Model\OrderQuery;
 use Thelia\Model\Product;
 use Thelia\Model\ProductQuery;
 use Thelia\Model\ProductSaleElements;
-use Thelia\TaxEngine\Calculator;
-use Thelia\TaxEngine\TaxEngine;
 
 class GoogleTagService
 {
@@ -336,6 +336,7 @@ class GoogleTagService
      */
     public function getPaymentInfo(int $orderId): false|string|null
     {
+        $tax = 0;
         $order = OrderQuery::create()->findPk($orderId);
 
         if (null === $order) {
@@ -369,6 +370,7 @@ class GoogleTagService
      */
     public function getShippingInfo(int $orderId): false|string|null
     {
+        $tax = 0;
         $order = OrderQuery::create()->findPk($orderId);
 
         if (null === $order) {
@@ -402,6 +404,7 @@ class GoogleTagService
      */
     public function getPurchaseData(int $orderId): false|string|null
     {
+        $tax = 0;
         $order = OrderQuery::create()->findPk($orderId);
 
         if (null === $order) {
@@ -574,6 +577,8 @@ class GoogleTagService
      */
     protected function getOrderTotalAmount($view)
     {
+        $tax = 0;
+
         switch ($view) {
             case 'cart':
             case 'order-delivery':
