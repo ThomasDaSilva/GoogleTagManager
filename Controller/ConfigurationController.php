@@ -38,7 +38,7 @@ class ConfigurationController extends BaseAdminController
             return $response;
         }
 
-        $form = $this->createForm(ConfigurationForm::getName());
+        $form = $this->createForm(ConfigurationForm::getName()); // 'googletagmanager_configuration_form'
 
         try {
             $vform = $this->validateForm($form);

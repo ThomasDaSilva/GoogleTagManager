@@ -40,11 +40,16 @@ class GoogleTagManager extends BaseModule
     /**
      * Defines how services are loaded in your modules.
      */
-    public static function configureServices(ServicesConfigurator $servicesConfigurator): void
+    public static function configureServices(ServicesConfigurator $services): void
     {
-        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
-            ->autowire()
-            ->autoconfigure();
+        $services->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([
+                __DIR__.'/I18n/*',
+                __DIR__.'/Config/**/*.php',
+                __DIR__.'/Tests/*',
+                __DIR__.'/GoogleTagManager.php',
+            ])
+            ->autowire(true)
+            ->autoconfigure(true);
     }
 }

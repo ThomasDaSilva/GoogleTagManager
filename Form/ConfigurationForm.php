@@ -24,6 +24,11 @@ use Thelia\Form\BaseForm;
  */
 class ConfigurationForm extends BaseForm
 {
+    public static function getName(): string
+    {
+        return 'googletagmanager_configuration_form';
+    }
+
     protected function buildForm(): void
     {
         $form = $this->formBuilder;
