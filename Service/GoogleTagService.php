@@ -47,7 +47,8 @@ class GoogleTagService
         $user = $this->requestStack->getSession()->getCustomerUser();
         $isConnected = null !== $user ? 1 : 0;
 
-        $view = $this->requestStack->getCurrentRequest()?->get('_view');
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        $view = $currentRequest?->attributes->get('_view', $currentRequest->query->get('_view', $currentRequest->request->get('_view')));
         $pageType = $this->getPageType($view);
 
         $result = [
@@ -135,8 +136,10 @@ class GoogleTagService
         ];
 
         if ($itemList) {
-            $item['item_list_id'] = $this->requestStack->getCurrentRequest()?->get('_view');
-            $item['item_list_name'] = $this->requestStack->getCurrentRequest()?->get('_view');
+            $currentRequest = $this->requestStack->getCurrentRequest();
+            $listView = $currentRequest?->attributes->get('_view', $currentRequest->query->get('_view', $currentRequest->request->get('_view')));
+            $item['item_list_id'] = $listView;
+            $item['item_list_name'] = $listView;
         }
 
         foreach ($categories as $index => $categoryTitle) {
@@ -202,8 +205,10 @@ class GoogleTagService
         ];
 
         if ($itemList) {
-            $item['item_list_id'] = $this->requestStack->getCurrentRequest()?->get('_view');
-            $item['item_list_name'] = $this->requestStack->getCurrentRequest()?->get('_view');
+            $currentRequest = $this->requestStack->getCurrentRequest();
+            $listView = $currentRequest?->attributes->get('_view', $currentRequest->query->get('_view', $currentRequest->request->get('_view')));
+            $item['item_list_id'] = $listView;
+            $item['item_list_name'] = $listView;
         }
 
         foreach ($categories as $index => $categoryTitle) {
@@ -513,15 +518,16 @@ class GoogleTagService
 
     protected function getPageName($view): ?string
     {
+        $currentRequest = $this->requestStack->getCurrentRequest();
         switch ($view) {
             case 'category':
-                $pageEntity = CategoryQuery::create()->findPk($this->requestStack->getCurrentRequest()?->get('category_id'));
+                $pageEntity = CategoryQuery::create()->findPk($currentRequest?->attributes->get('category_id', $currentRequest->query->get('category_id', $currentRequest->request->get('category_id'))));
                 break;
             case 'brand':
-                $pageEntity = BrandQuery::create()->findPk($this->requestStack->getCurrentRequest()?->get('brand_id'));
+                $pageEntity = BrandQuery::create()->findPk($currentRequest?->attributes->get('brand_id', $currentRequest->query->get('brand_id', $currentRequest->request->get('brand_id'))));
                 break;
             case 'product':
-                $pageEntity = ProductQuery::create()->findPk($this->requestStack->getCurrentRequest()?->get('product_id'));
+                $pageEntity = ProductQuery::create()->findPk($currentRequest?->attributes->get('product_id', $currentRequest->query->get('product_id', $currentRequest->request->get('product_id'))));
                 break;
             default:
                 return null;
@@ -544,9 +550,10 @@ class GoogleTagService
      */
     protected function getPageProductRef($view)
     {
+        $currentRequest = $this->requestStack->getCurrentRequest();
         switch ($view) {
             case 'product':
-                $product = ProductQuery::create()->findPk($this->requestStack->getCurrentRequest()->get('product_id'));
+                $product = ProductQuery::create()->findPk($currentRequest->attributes->get('product_id', $currentRequest->query->get('product_id', $currentRequest->request->get('product_id'))));
                 $productRefs = [$product->getRef()];
                 break;
 
@@ -559,7 +566,7 @@ class GoogleTagService
                 break;
 
             case 'order-placed':
-                $order = OrderQuery::create()->findPk($this->requestStack->getCurrentRequest()?->get('order_id'));
+                $order = OrderQuery::create()->findPk($currentRequest?->attributes->get('order_id', $currentRequest->query->get('order_id', $currentRequest->request->get('order_id'))));
                 $productRefs = array_map(static function (OrderProduct $item) {
                     return $item->getProductRef();
                 }, iterator_to_array($order->getOrderProducts()));
@@ -584,7 +591,8 @@ class GoogleTagService
             case 'order-delivery':
                 return $this->requestStack->getSession()->getSessionCart($this->dispatcher)?->getTaxedAmount($this->taxEngine->getDeliveryCountry());
             case 'order-placed':
-                $order = OrderQuery::create()->findPk($this->requestStack->getCurrentRequest()?->get('order_id'));
+                $currentRequest = $this->requestStack->getCurrentRequest();
+                $order = OrderQuery::create()->findPk($currentRequest?->attributes->get('order_id', $currentRequest->query->get('order_id', $currentRequest->request->get('order_id'))));
                 return $order->getTotalAmount($tax, false) - $tax;
             default:
                 return null;

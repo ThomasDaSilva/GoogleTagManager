@@ -60,7 +60,7 @@ class FrontHook extends BaseHook
         $gtmId = GoogleTagManager::getConfigValue(GoogleTagManager::GOOGLE_TAG_MANAGER_GMT_ID_CONFIG_KEY);
 
         if ("" !== $gtmId) {
-            $view = $request?->get('_view');
+            $view = $request?->attributes->get('_view', $request->query->get('_view', $request->request->get('_view')));
 
             $event->add($this->render('datalayer/thelia-page-view.html', ['data' => $this->googleTagService->getTheliaPageViewParameters()]));
 
@@ -93,7 +93,7 @@ class FrontHook extends BaseHook
                 ]));
             }
 
-            if ($view === 'order-placed' && $orderId = $request?->get('order_id')) {
+            if ($view === 'order-placed' && $orderId = $request?->attributes->get('order_id', $request->query->get('order_id', $request->request->get('order_id')))) {
                 $event->add($this->render('datalayer/thelia-page-view.html', [
                     'data' => $this->googleTagService->getPurchaseData($orderId)
                 ]));
@@ -133,7 +133,8 @@ class FrontHook extends BaseHook
 
     public function onMainJsInit(HookRenderEvent $event): void
     {
-        $view = $this->requestStack->getCurrentRequest()?->get('_view');
+        $request = $this->requestStack->getCurrentRequest();
+        $view = $request?->attributes->get('_view', $request->query->get('_view', $request->request->get('_view')));
 
         if (in_array($view, ['category', 'brand', 'search'])) {
             $event->add($this->render('datalayer/select-item.html'));

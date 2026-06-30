@@ -102,7 +102,7 @@ class GoogleTagListener implements EventSubscriberInterface
         $request = $this->requestStack->getCurrentRequest();
         $session = $request?->getSession();
 
-        if (!in_array($request?->get('_view'), ['product', 'category', 'brand', 'search'])) {
+        if (!in_array($request?->attributes->get('_view', $request->query->get('_view', $request->request->get('_view'))), ['product', 'category', 'brand', 'search'])) {
             $session->set(GoogleTagManager::GOOGLE_TAG_VIEW_LIST_ITEM, null);
             return;
         }
